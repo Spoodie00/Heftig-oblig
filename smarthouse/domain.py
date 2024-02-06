@@ -1,4 +1,4 @@
-class Measurement:
+aaclass Measurement:
     """
     This class represents a measurement taken from a sensor.
     """
