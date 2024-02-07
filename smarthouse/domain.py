@@ -1,4 +1,4 @@
-aaclass Measurement:
+class Measurement:
     """
     This class represents a measurement taken from a sensor.
     """
@@ -8,9 +8,9 @@ aaclass Measurement:
         self.value = value
         self.unit = unit
 
-
-
 # TODO: Add your own classes here!
+
+
 
 
 class SmartHouse:
@@ -23,18 +23,25 @@ class SmartHouse:
     house's physical layout) as well as register and modify smart devices and their state.
     """
 
+    def __init__(self):
+        #Legg til countere her hvis nødvendig
+        self.num_floors = []
+        self.num_rooms = []
+        self.floorspace = 0
+
+
     def register_floor(self, level):
-        """
-        This method registers a new floor at the given level in the house
-        and returns the respective floor object.
-        """
+        # Ferdig
+        self.level = level
+        self.num_floors.append(level)
 
     def register_room(self, floor, room_size, room_name = None):
-        """
-        This methods registers a new room with the given room areal size 
-        at the given floor. Optionally the room may be assigned a mnemonic name.
-        """
-        pass
+        # Ferdig
+        self.floor = floor
+        self.room_size = room_size
+        self.room_name = room_name
+        self.num_rooms.append(room_name)
+        self.floorspace += room_size
 
 
     def get_floors(self):
@@ -52,13 +59,15 @@ class SmartHouse:
         This methods returns the list of all registered rooms in the house.
         The resulting list has no particular order.
         """
-        pass
+        #Ferdig
+        return self.num_rooms
 
 
     def get_area(self):
         """
         This methods return the total area size of the house, i.e. the sum of the area sizes of each room in the house.
         """
+        return self.floorspace
 
 
     def register_device(self, room, device):
