@@ -8,6 +8,33 @@ class Measurement:
         self.value = value
         self.unit = unit
 
+class Device: #Muligens fakket det litt til her lols:D
+    Type=str
+    ModelName=str
+    DeviceID=str
+    DeviceProducer=str
+    def __init__(self,Room, Type, DeviceID,ModelName, DeviceProducer):
+        self.Location=Room
+        self.Device=Type
+        self.DeviceName=ModelName
+        self.DeviceID=DeviceID
+        self.DeviceProducer=DeviceProducer
+
+class Measurements: #Gjorde dette for en stund tilbake, husker ikke helt hva jeg tnekte
+    def handleTime(self, Time: DateTime):
+        pass
+
+    def handleValue(self, Value: float):
+        pass
+
+    def handleMeasurem(self, Measure: str):
+        pass
+class Sensor:
+    def __init__(self):
+        pass
+    def accept(self, visitor: Measurements):
+        pass
+
 # TODO: Add your own classes here!
 
 
@@ -51,7 +78,8 @@ class SmartHouse:
         registered a basement (level=0), a ground floor (level=1) and a first floor 
         (leve=1), then the resulting list contains these three flors in the above order.
         """
-        pass
+        return self.num_floors
+
 
 
     def get_rooms(self):
