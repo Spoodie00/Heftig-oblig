@@ -8,37 +8,22 @@ class Measurement:
         self.value = value
         self.unit = unit
 
-class Device: #Muligens fakket det litt til her lols:D
-    Type=str
-    ModelName=str
-    DeviceID=str
-    DeviceProducer=str
-    def __init__(self,Room, Type, DeviceID,ModelName, DeviceProducer):
-        self.Location=Room
-        self.Device=Type
-        self.DeviceName=ModelName
-        self.DeviceID=DeviceID
-        self.DeviceProducer=DeviceProducer
-
-class Measurements: #Gjorde dette for en stund tilbake, husker ikke helt hva jeg tnekte
-    def handleTime(self, Time: DateTime):
-        pass
-
-    def handleValue(self, Value: float):
-        pass
-
-    def handleMeasurem(self, Measure: str):
-        pass
-class Sensor:
-    def __init__(self):
-        pass
-    def accept(self, visitor: Measurements):
-        pass
 
 # TODO: Add your own classes here!
+class Device:
+    def __init__(self, device_type,  device_id, supplier, model_name):
+        self.id = device_id
+        self.supplier = supplier
+        self.model_name = model_name
+        self.device_type = device_type
 
+class Sensor(Device):
+    def __init__(self, device_id, supplier, model_name):
+        self.type = Device.device_type
 
-
+class Aktuator(Device):
+    def __init__(self, device_id, supplier, model_name):
+        self.type = Device.device_type
 
 class SmartHouse:
     """
@@ -55,12 +40,20 @@ class SmartHouse:
         self.num_floors = []
         self.num_rooms = []
         self.floorspace = 0
+        self.num_devices=[]
+        self.iddevice = []
+        self.area=[]
+        self.a=[]
+        self.b=[]
+
+
+
 
 
     def register_floor(self, level):
         # Ferdig
         self.level = level
-        self.num_floors.append(level)
+        #self.num_floors.append(level)
 
     def register_room(self, floor, room_size, room_name = None):
         # Ferdig
@@ -68,7 +61,9 @@ class SmartHouse:
         self.room_size = room_size
         self.room_name = room_name
         self.num_rooms.append(room_name)
-        self.floorspace += room_size
+        self.area.append(room_size)
+        self.floorspace=sum(self.area)
+
 
 
     def get_floors(self):
@@ -98,16 +93,40 @@ class SmartHouse:
         return self.floorspace
 
 
-    def register_device(self, room, device):
+    def register_device(self, Room, Type, DeviceID,DeviceName, Producer):
         """
         This methods registers a given device in a given room.
         """
-        pass
+        self.device=Type
+        self.num_devices.append(Type)
+        self.deviceID=DeviceID
+        self.iddevice.append(DeviceID)
+        self.DeviceName=DeviceName
+        self.Producer=Producer
+
 
     
-    def get_device(self, device_id):
+    def get_devices(self):
         """
         This method retrieves a device object via its id.
         """
-        pass
+        return self.num_devices
+
+    def get_device_by_id(self, var):
+        self.var = var
+        self.b=len(self.iddevice)
+        self.get_devices()
+        for item in range(self.b):
+            if var != self.iddevice[item]:
+                self.a = None
+                pass
+            else:
+                self.a = self.num_devices[item]
+                break
+
+
+            return self.a
+
+
+
 

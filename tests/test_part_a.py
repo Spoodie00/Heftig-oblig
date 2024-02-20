@@ -12,10 +12,12 @@ class TestPartA(TestCase):
     def test_basic_get_area_size(self):
         self.assertEqual(h.get_area(), 156.55)
 
+
     def test_basic_get_no_of_devices(self):
         self.assertEqual(len(h.get_devices()), 14)
 
     def test_basic_get_device_by_id(self):
+        print(h.a)
         # device id does not exist
         self.assertIsNone(h.get_device_by_id("9e5b8274-4e77-4e8e-80d2-b40d648ea04b"))
         # device that exists
@@ -47,7 +49,11 @@ class TestPartA(TestCase):
         self.assertTrue(motion_sensor in living_room.devices)
         self.assertEqual(len(living_room.devices), 3)
 
+
     def test_intermediate_sensor_measurements(self):
+        print(h.IDdevice)
+        print(h.Id)
+        print(h.a)
         temp = h.get_device_by_id("4d8b1d62-7921-4917-9b70-bbd31f6e2e8e")
         m = temp.last_measurement()
         # Measurements are recorded in celsius and values a floating point numbers

@@ -1,6 +1,6 @@
 from smarthouse.domain import SmartHouse
 
-DEMO_HOUSE = SmartHouse()
+"""DEMO_HOUSE = SmartHouse()
 
 # Building house structure
 ground_floor = DEMO_HOUSE.register_floor(1)
@@ -19,11 +19,10 @@ office = DEMO_HOUSE.register_room(second_floor, 11.75, "Office")
 dressing_room = DEMO_HOUSE.register_room(second_floor, 4, "Dressing room")
 hallway = DEMO_HOUSE.register_room(second_floor, 10, "Hallway")
 master_bedroom = DEMO_HOUSE.register_room(second_floor, 17, "Master Bedroom")
-
+"""
 # TODO: continue registering the remaining floor, rooms and devices
 
-"""
-Tenkte sånn, men ork å modifiere nå, hvis jeg tenker feil å decives. 
+#Tenkte sånn, men ork å modifiere nå, hvis jeg tenker feil å decives.
 
 DEMO_HOUSE = SmartHouse()
 
@@ -42,15 +41,15 @@ Garage=DEMO_HOUSE.register_room(ground_floor,19,"Garage")
 Hallway = DEMO_HOUSE.register_room(first_floor, 10, "Hallway")
 Bathroom2 = DEMO_HOUSE.register_room(first_floor, 9.25, "Bathroom 2")
 GuestRoom2=DEMO_HOUSE.register_room(first_floor,8,"Guest Room 2")
-GuestRoom3=DEMO_HOUSE.register_room(first_floor,810,"Guest Room 3")
+GuestRoom3=DEMO_HOUSE.register_room(first_floor,10,"Guest Room 3")
 DressingRoom=DEMO_HOUSE.register_room(first_floor,4,"Dessing Room")
 MasterBedroom=DEMO_HOUSE.register_room(first_floor,17,"Master Bedroom")
 Office=DEMO_HOUSE.register_room(first_floor,11.75,"Office")
 
 #Devices
 #Devices Ground floor
-AutomaticGarageDoor=DEMO_HOUSE.register_device(Garage,"Automatic Garage Door","9a54c1ec-0cb5-45a7-b20d-2a7349f1b132","Guardian Lock 9000", "	MythicalTech")
-SmartLock=DEMO_HOUSE.register_device(Entrance,"Smart Lock","4d5f1ac6-906a-4fd1-b4bf-3a0671e4c4f1","Guardian Lock 7000", "	MythicalTech")
+AutomaticGarageDoor=DEMO_HOUSE.register_device(Garage,"Automatic Garage Door","9a54c1ec-0cb5-45a7-b20d-2a7349f1b132","Guardian Lock 9000", "MythicalTech")
+SmartLock=DEMO_HOUSE.register_device(Entrance,"Smart Lock","4d5f1ac6-906a-4fd1-b4bf-3a0671e4c4f1","Guardian Lock 7000", "MythicalTech")
 ElectricityMeter=DEMO_HOUSE.register_device(Entrance,"Electricity Meter","a2f8690f-2b3a-43cd-90b8-9deea98b42a7","Volt Watch Elite", "MysticEnergy Innovations")
 MotionSensor=DEMO_HOUSE.register_device(LivingRoomKitchen,"Motion Sensor","cd5be4e8-0e6b-4cb5-a21f-819d06cf5fc5","MoveZ Detect 69","NebulaGuard Innovations")
 CO2Sensor=DEMO_HOUSE.register_device(LivingRoomKitchen,"CO2 sensor","8a43b2d7-e8d3-4f3d-b832-7dbf37bf629e","Smoke Warden 1000", "	ElysianTech")
@@ -66,5 +65,3 @@ AirQualitySensor=DEMO_HOUSE.register_device(GuestRoom3,"Air Quality Sensor", "7c
 LightBulp=DEMO_HOUSE.register_device(GuestRoom2,"Light Bulp","6b1c5f6b-37f6-4e3d-9145-1cfbe2f1fc28","Lumina Glow 4000", "Elysian Tech")
 Dehumidifier=DEMO_HOUSE.register_device(Bathroom2,"Dehumidifier","9e5b8274-4e77-4e4e-80d2-b40d648ea02a","Hydra Dry 8000", "ArcaneTech Solutions	")
 SmartPlg=DEMO_HOUSE.register_device(Office,"Smart Plug","1a66c3d6-22b2-446e-bf5c-eb5b9d1a8c79","FlowState X","MysticEnergy Innovations")
-
-"""
