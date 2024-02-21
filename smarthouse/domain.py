@@ -11,22 +11,57 @@ class Measurement:
 
 # TODO: Add your own classes here!
 class Device:
-    def __init__(self, room, device_type, deviceid, devicename, producer):
+    def __init__(self, room1, device_type, deviceid, model_name, supplier, sensor_type=None):
         self.device_type = device_type
-        self.room = room
+        self.room = room1
         SmartHouse.num_devices.append(device_type)
         self.id = deviceid
         SmartHouse.iddevice.append(deviceid)
-        self.DeviceName = devicename
-        self.Producer = producer
+        self.model_name = model_name
+        self.supplier = supplier
+        self.actuator = False
+        self.sensor = False
+        if sensor_type == "both":
+            self.actuator = True
+            self.sensor = False
+        elif sensor_type == "sensor":
+            self.sensor = True
+        elif sensor_type == "actuator":
+            self.actuator = True
+
+    def is_actuator(self):
+        return self.actuator
+
+    def is_sensor(self):
+        return self.sensor
+
+    # Denne skal returnere room-objektet under, men ser ikke helt hvorfor den ikke gjør det
+    # skal prøve senere med en sterkere espresso
+    def room(self):
+        return self.room
 
 
-class Sensor():
+class Room:
+    def __init__(self, floor, room_size, room_name=None):
+        self.floor = floor
+        self.room_size = room_size
+        self.room_name = room_name
+
+    def devices(self):
+        output = []
+        for device in SmartHouse.device_list:
+            if device.room == self:
+                output.append(device)
+        return output
+
+
+
+class Sensor:
     def __init__(self, device_id, supplier, model_name):
         self.type = Device.device_type
 
 
-class Aktuator():
+class Aktuator:
     def __init__(self, device_id, supplier, model_name):
         self.type = Device.device_type
 
@@ -37,13 +72,14 @@ class SmartHouse:
     Do not delete this class nor its predefined methods since other parts of the
     application may depend on it (you are free to add as many new methods as you like, though).
 
-    The SmartHouse class provides functionality to register rooms and floors (i.e. changing the 
+    The SmartHouse class provides functionality to register rooms and floors (i.e. changing the
     house's physical layout) as well as register and modify smart devices and their state.
     """
 
     device_list = {}
     num_devices = []
     iddevice = []
+    room_list = {}
 
     def __init__(self):
         # Legg til countere her hvis nødvendig
@@ -70,13 +106,11 @@ class SmartHouse:
         self.num_floors.append(level)
 
     def register_room(self, floor, room_size, room_name=None):
-        self.floor = floor
-        self.room_size = room_size
-        self.room_name = room_name
         self.num_rooms.append(room_name)
         self.area.append(room_size)
         self.floorspace = sum(self.area)
-
+        new_room = Room(floor, room_size, room_name=None)
+        SmartHouse.room_list[room_name] = new_room
 
     def get_floors(self):
         """
@@ -100,19 +134,18 @@ class SmartHouse:
         """
         return self.floorspace
 
-    def register_device(self, room, device_type, DeviceID, DeviceName, Producer):
+    def register_device(self, room, device_type, deviceid, devicename, supplier, sensor_type=False):
         """
         This methods registers a given device in a given room.
         """
-        new_device = Device(room, device_type, DeviceID, DeviceName, Producer)
-        SmartHouse.device_list[DeviceID] = new_device
+        new_device = Device(room, device_type, deviceid, devicename, supplier, sensor_type)
+        SmartHouse.device_list[deviceid] = new_device
 
 
     def get_devices(self):
         output = []
         for key in SmartHouse.device_list:
             output.append(SmartHouse.device_list[key])
-        print(output)
         return output
 
     def get_device_by_id(self, variable1):
