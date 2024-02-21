@@ -11,12 +11,14 @@ class Measurement:
 
 # TODO: Add your own classes here!
 class Device:
-    def __init__(self, device_type,  device_id, supplier, model_name):
-        self.id = device_id
-        self.supplier = supplier
-        self.model_name = model_name
+    def __init__(self, room, device_type, deviceid, devicename, producer):
         self.device_type = device_type
-        self.type = None
+        self.room = room
+        SmartHouse.num_devices.append(device_type)
+        self.id = deviceid
+        SmartHouse.iddevice.append(deviceid)
+        self.DeviceName = devicename
+        self.Producer = producer
 
 
 class Sensor():
@@ -39,13 +41,15 @@ class SmartHouse:
     house's physical layout) as well as register and modify smart devices and their state.
     """
 
+    device_list = {}
+    num_devices = []
+    iddevice = []
+
     def __init__(self):
         # Legg til countere her hvis nødvendig
         self.num_floors = []
         self.num_rooms = []
         self.floorspace = 0
-        self.num_devices = []
-        self.iddevice = []
         self.area = []
         self.a = []
         self.b = []
@@ -58,7 +62,6 @@ class SmartHouse:
         self.DeviceName = None
         self.Producer = None
         self.variable1 = None
-        self.devices3 = []
         self.room = None
         self.id = None
 
@@ -97,28 +100,23 @@ class SmartHouse:
         """
         return self.floorspace
 
-    def register_device(self, room, Type, DeviceID, DeviceName, Producer):
+    def register_device(self, room, device_type, DeviceID, DeviceName, Producer):
         """
         This methods registers a given device in a given room.
         """
-        self.device = Type
-        self.room = room
-        self.num_devices.append(Type)
-        self.id = DeviceID
-        self.iddevice.append(DeviceID)
-        self.DeviceName = DeviceName
-        self.Producer = Producer
-        self.devices3.append(self)
-
+        new_device = Device(room, device_type, DeviceID, DeviceName, Producer)
+        SmartHouse.device_list[DeviceID] = new_device
 
 
     def get_devices(self):
-        """
-        This method retrieves a device object via its id.
-        """
-        return self.num_devices
+        output = []
+        for key in SmartHouse.device_list:
+            output.append(SmartHouse.device_list[key])
+        print(output)
+        return output
 
     def get_device_by_id(self, variable1):
-        for unit1 in self.devices3:
-            if unit1.id == variable1:
-                return unit1
+        try:
+            return SmartHouse.device_list[variable1]
+        except KeyError:
+            return None
