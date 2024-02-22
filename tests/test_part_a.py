@@ -51,28 +51,25 @@ class TestPartA(TestCase):
 
 
     def test_intermediate_sensor_measurements(self):
-        print(h.IDdevice)
-        print(h.Id)
-        print(h.a)
         temp = h.get_device_by_id("4d8b1d62-7921-4917-9b70-bbd31f6e2e8e")
         m = temp.last_measurement()
         # Measurements are recorded in celsius and values a floating point numbers
         self.assertEqual(m.unit, "°C")
-        self.assertEqual(type(m.value), type(0.0))
+        self.assertEqual(type(m.value()), type(0.0))
 
     def test_intermediate_actuator_state_change(self):
         # actuators can be turned on and off
         bulp = h.get_device_by_id("6b1c5f6b-37f6-4e3d-9145-1cfbe2f1fc28")
         bulp.turn_on()
-        self.assertTrue(bulp.is_active())
+        self.assertTrue(bulp.is_active)
         bulp.turn_off()
-        self.assertFalse(bulp.is_active())
+        self.assertFalse(bulp.is_active)
         # some actuators can receive extra information
         heat_pump = h.get_device_by_id("5e13cabc-5c58-4bb3-82a2-3039e4480a6d")
         heat_pump.turn_on(21.3)
-        self.assertTrue(heat_pump.is_active())
+        self.assertTrue(heat_pump.is_active)
         heat_pump.turn_off()
-        self.assertFalse(heat_pump.is_active())
+        self.assertFalse(heat_pump.is_active)
 
 
     # Level 3 Advanced: Registering the same device in another room, moves it from one room to another 
@@ -88,8 +85,8 @@ class TestPartA(TestCase):
         bulp = h.get_device_by_id("6b1c5f6b-37f6-4e3d-9145-1cfbe2f1fc28")
         gr2 = bulp.room
         # before
-        self.assertEqual(len(dresser.devices), 0)
-        self.assertEqual(len(gr2.devices), 1)
+        self.assertEqual(len(dresser.devices()), 0)
+        self.assertEqual(len(gr2.devices()), 1)
         self.assertEqual(gr2, bulp.room)
 
         # moving the device 

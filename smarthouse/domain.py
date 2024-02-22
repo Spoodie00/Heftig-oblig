@@ -1,3 +1,5 @@
+import random
+
 class Measurement:
     """
     This class represents a measurement taken from a sensor.
@@ -21,9 +23,12 @@ class Device:
         self.supplier = supplier
         self.actuator = False
         self.sensor = False
+        self.is_active = False
+        self.target_value = 0
+
         if sensor_type == "both":
             self.actuator = True
-            self.sensor = False
+            self.sensor = True
         elif sensor_type == "sensor":
             self.sensor = True
         elif sensor_type == "actuator":
@@ -38,6 +43,34 @@ class Device:
     def room(self):
         return self.room
 
+    def last_measurement(self):
+        if self.sensor:
+            return Sensor()
+        else:
+            return "Not a sensor"
+
+    def turn_on(self, value=0):
+        if self.actuator:
+            self.is_active = True
+            self.target_value = value
+
+    def turn_off(self):
+        if self.actuator:
+            self.is_active = False
+
+    def is_active(self):
+        return self.is_active
+
+class Sensor:
+    def __init__(self):
+        self.temp = random.uniform(10.5, 75.5)
+        self.unit = "°C"
+
+    def unit(self):
+        return self.unit
+
+    def value(self):
+        return self.temp
 
 class Room:
     def __init__(self, floor, room_size, room_name=None):
@@ -51,17 +84,6 @@ class Room:
             if SmartHouse.device_list[device].room == self:
                 output.append(SmartHouse.device_list[device])
         return output
-
-
-
-class Sensor:
-    def __init__(self, device_id, supplier, model_name):
-        self.type = Device.device_type
-
-
-class Aktuator:
-    def __init__(self, device_id, supplier, model_name):
-        self.type = Device.device_type
 
 
 class SmartHouse:
@@ -125,7 +147,10 @@ class SmartHouse:
         This methods returns the list of all registered rooms in the house.
         The resulting list has no particular order.
         """
-        return self.num_rooms
+        output = []
+        for key in SmartHouse.room_list:
+            output.append(SmartHouse.room_list[key])
+        return output
 
     def get_area(self):
         """
