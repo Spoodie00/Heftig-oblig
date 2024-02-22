@@ -94,8 +94,8 @@ class TestPartA(TestCase):
 
         # after
         self.assertEqual(dresser, bulp.room)
-        self.assertEqual(len(dresser.devices), 1)
-        self.assertEqual(len(gr2.devices), 0)
+        self.assertEqual(len(dresser.devices()), 1)
+        self.assertEqual(len(gr2.devices()), 0)
 
 
 if __name__ == "__main__":

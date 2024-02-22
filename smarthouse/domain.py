@@ -158,13 +158,15 @@ class SmartHouse:
         """
         return self.floorspace
 
-    def register_device(self, room, device_type, deviceid, devicename, supplier, sensor_type=False):
+    def register_device(self, room, device_type=None, deviceid=None, devicename=None, supplier=None, sensor_type=False):
         """
         This methods registers a given device in a given room.
         """
-        new_device = Device(room, device_type, deviceid, devicename, supplier, sensor_type)
-        SmartHouse.device_list[deviceid] = new_device
-
+        if deviceid:
+            new_device = Device(room, device_type, deviceid, devicename, supplier, sensor_type)
+            SmartHouse.device_list[deviceid] = new_device
+        else:
+            device_type.room = room
 
     def get_devices(self):
         output = []
