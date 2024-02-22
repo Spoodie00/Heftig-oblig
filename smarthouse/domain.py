@@ -24,9 +24,9 @@ class Device:
         self.actuator = False
         self.sensor = False
         self.is_active = False
-        self.target_value = 0
+        self.target_value = 0 #Setter definisjonene til enheten
 
-        if sensor_type == "both":
+        if sensor_type == "both": #Setter scenario for definisjon til enhetstypen.
             self.actuator = True
             self.sensor = True
         elif sensor_type == "sensor":
@@ -43,18 +43,18 @@ class Device:
     def room(self):
         return self.room
 
-    def last_measurement(self):
+    def last_measurement(self): #Setter målenene til sensor variabel
         if self.sensor:
             return Sensor()
         else:
             return "Not a sensor"
 
-    def turn_on(self, value=0):
+    def turn_on(self, value=0): #Setter aktivering for aktuator
         if self.actuator:
             self.is_active = True
             self.target_value = value
 
-    def turn_off(self):
+    def turn_off(self): #""_"" deaktivering
         if self.actuator:
             self.is_active = False
 
@@ -62,7 +62,7 @@ class Device:
         return self.is_active
 
 class Sensor:
-    def __init__(self):
+    def __init__(self): #setter definisjonene til sensor klassen
         self.temp = random.uniform(10.5, 75.5)
         self.unit = "°C"
 
@@ -78,7 +78,7 @@ class Room:
         self.room_size = room_size
         self.room_name = room_name
 
-    def devices(self):
+    def devices(self):  #Setter enhet i rom.
         output = []
         for device in SmartHouse.device_list:
             if SmartHouse.device_list[device].room == self:
@@ -95,7 +95,7 @@ class SmartHouse:
     The SmartHouse class provides functionality to register rooms and floors (i.e. changing the
     house's physical layout) as well as register and modify smart devices and their state.
     """
-
+#Setter plass for variablene
     device_list = {}
     num_devices = []
     iddevice = []
@@ -121,11 +121,11 @@ class SmartHouse:
         self.room = None
         self.id = None
 
-    def register_floor(self, level):
+    def register_floor(self, level): #Definerer og lagrer etasje
         self.level = level
         self.num_floors.append(level)
 
-    def register_room(self, floor, room_size, room_name=None):
+    def register_room(self, floor, room_size, room_name=None): # "_" rom
         self.num_rooms.append(room_name)
         self.area.append(room_size)
         self.floorspace = sum(self.area)
@@ -168,13 +168,13 @@ class SmartHouse:
         else:
             device_type.room = room
 
-    def get_devices(self):
+    def get_devices(self): #Gir liste med enheter registert
         output = []
         for key in SmartHouse.device_list:
             output.append(SmartHouse.device_list[key])
         return output
 
-    def get_device_by_id(self, variable1):
+    def get_device_by_id(self, variable1): #Gir enhet fra liste ved input av enhetsid.
         try:
             return SmartHouse.device_list[variable1]
         except KeyError:
