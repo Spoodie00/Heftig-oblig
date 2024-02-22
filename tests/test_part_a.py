@@ -46,8 +46,8 @@ class TestPartA(TestCase):
         self.assertFalse(bulp.is_sensor())
         # also they know about their room and rooms know about their devices
         living_room = motion_sensor.room
-        self.assertTrue(motion_sensor in living_room.devices)
-        self.assertEqual(len(living_room.devices), 3)
+        self.assertTrue(motion_sensor in living_room.devices())
+        self.assertEqual(len(living_room.devices()), 3)
 
 
     def test_intermediate_sensor_measurements(self):

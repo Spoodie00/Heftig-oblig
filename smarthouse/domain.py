@@ -11,9 +11,9 @@ class Measurement:
 
 # TODO: Add your own classes here!
 class Device:
-    def __init__(self, room1, device_type, deviceid, model_name, supplier, sensor_type=None):
+    def __init__(self, room, device_type, deviceid, model_name, supplier, sensor_type=None):
         self.device_type = device_type
-        self.room = room1
+        self.room = room
         SmartHouse.num_devices.append(device_type)
         self.id = deviceid
         SmartHouse.iddevice.append(deviceid)
@@ -35,8 +35,6 @@ class Device:
     def is_sensor(self):
         return self.sensor
 
-    # Denne skal returnere room-objektet under, men ser ikke helt hvorfor den ikke gjør det
-    # skal prøve senere med en sterkere espresso
     def room(self):
         return self.room
 
@@ -50,8 +48,8 @@ class Room:
     def devices(self):
         output = []
         for device in SmartHouse.device_list:
-            if device.room == self:
-                output.append(device)
+            if SmartHouse.device_list[device].room == self:
+                output.append(SmartHouse.device_list[device])
         return output
 
 
@@ -109,8 +107,9 @@ class SmartHouse:
         self.num_rooms.append(room_name)
         self.area.append(room_size)
         self.floorspace = sum(self.area)
-        new_room = Room(floor, room_size, room_name=None)
+        new_room = Room(floor, room_size, room_name)
         SmartHouse.room_list[room_name] = new_room
+        return new_room
 
     def get_floors(self):
         """
