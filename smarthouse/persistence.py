@@ -1,6 +1,6 @@
 import sqlite3
 from typing import Optional
-from smarthouse.domain import Measurement
+from smarthouse.domain import Measurement, SmartHouse
 
 class SmartHouseRepository:
     """
@@ -28,7 +28,6 @@ class SmartHouseRepository:
         self.conn.close()
         self.conn = sqlite3.connect(self.file)
 
-    
     def load_smarthouse_deep(self):
         """
         This method retrives the complete single instance of the _SmartHouse_ 
@@ -38,7 +37,38 @@ class SmartHouseRepository:
         """
         # TODO: START here! remove the following stub implementation and implement this function 
         #       by retrieving the data from the database via SQL `SELECT` statements.
-        return NotImplemented
+
+        test_house = SmartHouse()
+
+        connector = self.conn.cursor()
+        connector.execute("SELECT * FROM rooms;")
+        result = connector.fetchall()
+        connector.close()
+
+        for room in result:
+            floor = room[1]
+            floor_size = room[2]
+            name = room[3]
+            test_house.register_room(floor, floor_size, name)
+
+        connector = self.conn.cursor()
+        connector.execute("SELECT * FROM devices;")
+        result = connector.fetchall()
+        connector.close()
+
+        for device in result:
+            room_list = test_house.get_rooms()
+            room = room_list[device[1]-1]
+            device_type = device[2]
+            deviceid = device[0]
+            device_name = device[5]
+            supplier = device[4]
+            sensor_type = device[3]
+            test_house.register_device(room, device_type, deviceid, device_name, supplier, sensor_type)
+
+
+        print(test_house.get_rooms())
+        return test_house
 
 
     def get_latest_reading(self, sensor) -> Optional[Measurement]:
