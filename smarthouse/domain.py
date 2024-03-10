@@ -43,9 +43,10 @@ class Device:
     def room(self):
         return self.room
 
-    def last_measurement(self):  # Setter målenene til sensor variabel
+    def last_measurement(self, measurement=None):  # Setter målenene til sensor variabel
         if self.sensor:
-            return Sensor()
+            output = Sensor(measurement)
+            return output
         else:
             return "Not a sensor"
 
@@ -63,15 +64,35 @@ class Device:
 
 
 class Sensor:
-    def __init__(self):  # setter definisjonene til sensor klassen
-        self.temp = random.uniform(10.5, 75.5)
-        self.unit = "°C"
+    def __init__(self, measurement_tuple=None):  # setter definisjonene til sensor klassen
+        if not measurement_tuple:
+            self.temp = random.uniform(10.5, 75.5)
+            self.unit = "°C"
+            self.timestamp = "1970-01-01 00:00:01"
+        else:
+            self.timestamp = measurement_tuple[1]
+            self.temp = measurement_tuple[2]
+            self.unit = measurement_tuple[3]
 
+    @property
     def unit(self):
-        return self.unit
+        return self._unit
 
+    @unit.setter
+    def unit(self, value):
+        self._unit = value
+
+    @property
     def value(self):
         return self.temp
+
+    @property
+    def timestamp(self):
+        return self._timestamp
+
+    @timestamp.setter
+    def timestamp(self, value):
+        self._timestamp = value
 
 
 class Room:

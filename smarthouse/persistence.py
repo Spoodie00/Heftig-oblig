@@ -67,7 +67,6 @@ class SmartHouseRepository:
             test_house.register_device(room, device_type, deviceid, device_name, supplier, sensor_type)
 
 
-        print(test_house.get_rooms())
         return test_house
 
 
@@ -77,7 +76,15 @@ class SmartHouseRepository:
         Returns None if the given object has no sensor readings.
         """
         # TODO: After loading the smarthouse, continue here
-        return NotImplemented
+        connector = self.conn.cursor()
+        reading = connector.execute("SELECT * FROM measurements WHERE device = ? ORDER BY ts DESC LIMIT 1", (sensor.id,)).fetchone()
+        connector.close()
+        output1 = sensor.last_measurement(reading)
+        if isinstance(output1, str) or reading == None:
+            return None
+        else:
+            return output1
+
 
 
     def update_actuator_state(self, actuator):
