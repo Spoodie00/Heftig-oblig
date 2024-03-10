@@ -123,37 +123,6 @@ class SmartHouseRepository:
         the average recorded humidity in that room at that particular time.
         The result is a (possibly empty) list of number representing hours [0-23].
         """
-        timestamps = {}
-        sensor_id = ""
-        output = []
 
-        device_list = room.devices()
-        for device in device_list:
-            if device.is_sensor():
-                sensor_id = device.get_id()
-                break
-        connector = self.conn.cursor()
-        reading = connector.execute("""SELECT * 
-            FROM measurements 
-            WHERE device = ?
-            AND strftime('%Y-%m-%d', ts) = ?
-            ORDER BY ts ASC""",
-                                    (sensor_id, date)).fetchall()
-        connector.close()
-        humidity_readings = list(map(lambda x: x[2], reading))
-        avg = sum(humidity_readings) / len(humidity_readings)
-
-        for row in reading:
-            timestamp_hour = str(row[1])[11:13]
-            if row[2] > avg:
-                try:
-                    timestamps[timestamp_hour] += 1
-                except KeyError:
-                    timestamps[timestamp_hour] = 1
-
-        for key in timestamps:
-            if timestamps[key] > 3:
-                output.append(int(key))
-
-        return output
+        pass
 
