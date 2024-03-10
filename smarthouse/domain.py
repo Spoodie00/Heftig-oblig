@@ -34,6 +34,10 @@ class Device:
         elif sensor_type == "actuator":
             self.actuator = True
 
+    def get_id(self):
+        return self.id
+
+
     def is_actuator(self):
         return self.actuator
 
