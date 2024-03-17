@@ -25,8 +25,10 @@ class SmartHouseRepository:
         return self.conn.cursor()
 
     def reconnect(self):
+        self.conn.commit()
         self.conn.close()
         self.conn = sqlite3.connect(self.file)
+
 
     def load_smarthouse_deep(self):
         """
@@ -67,6 +69,15 @@ class SmartHouseRepository:
             test_house.register_device(room, device_type, deviceid, device_name, supplier, sensor_type)
 
 
+        connector = self.conn.cursor()
+        connector.execute("SELECT * FROM measurements;")
+        measurements_result = connector.fetchall()
+        connector.close()
+
+        for device in measurements_result:
+            value = device[2]
+            test_house.register_device(value)
+
         return test_house
 
 
@@ -85,18 +96,36 @@ class SmartHouseRepository:
         else:
             return output1
 
-
-
     def update_actuator_state(self, actuator):
-        """
-        Saves the state of the given actuator in the database. 
-        """
-        # TODO: Implement this method. You will probably need to extend the existing database structure: e.g.
-        #       by creating a new table (`CREATE`), adding some data to it (`INSERT`) first, and then issue
-        #       and SQL `UPDATE` statement. Remember also that you will have to call `commit()` on the `Connection`
-        #       stored in the `self.conn` instance variable.
-        pass
+        cursor = self.cursor()
 
+        # Check if the actuator state table exists, if not create it
+        cursor.execute('''CREATE TABLE IF NOT EXISTS update_actuator_state (
+                              deviceid TEXT,
+                              is_active INTEGER,
+                              turnon INTEGER
+                          )''')
+
+        # Check if the actuator already exists in the table
+        cursor.execute("SELECT * FROM update_actuator_state WHERE deviceid = ?", (actuator.get_id(),))
+        existing_actuator = cursor.fetchall()
+
+        if existing_actuator:
+            state=1 if actuator.is_active() or actuator.turnon() else 0
+            # Update the existing actuator state
+            cursor.execute("UPDATE update_actuator_state SET is_active = ?, tunron=? WHERE deviceid = ?",
+                           (actuator.is_active(), actuator.turnon(), actuator.get_id()))
+            existing_actuator = cursor.fetchall()
+        else:
+            state=1 if actuator.is_active() or actuator.turnon() else 0
+            # Insert a new record for the actuator
+            cursor.execute("INSERT INTO update_actuator_state (deviceid, is_active, turnon) VALUES (?,?,?)",
+                           (actuator.get_id(), actuator.is_active(), actuator.turnon()))
+            existing_actuator=cursor.fetchall()
+
+        self.conn.commit()
+        cursor.close()
+        return existing_actuator
 
     # statistics
 
@@ -113,9 +142,16 @@ class SmartHouseRepository:
         """
         # TODO: This and the following statistic method are a bit more challenging. Try to design the respective 
         #       SQL statements first in a SQL editor like Dbeaver and then copy it over here.  
-        return NotImplemented
+        connector = self.conn.cursor()
+        reading = connector.execute("SELECT * FROM measurements WHERE value>(SELECT AVG(value) FROM measurement WHERE deivce=(SELECT id FROM devices WHERE room=?) ) = ? ORDER BY ts DESC LIMIT 1",
+                                    (room.id,)).fetchall()
+        connector.close()
+        output = room.last_measurement(reading)
+        if isinstance(output1, str) or reading == None:
+            return None
+        else:
+            return output
 
-    
     def calc_hours_with_humidity_above(self, room, date: str) -> list:
         """
         This function determines during which hours of the given day
@@ -123,6 +159,35 @@ class SmartHouseRepository:
         the average recorded humidity in that room at that particular time.
         The result is a (possibly empty) list of number representing hours [0-23].
         """
+        connector = self.conn.cursor()
+        humidityabove=[]
 
-        pass
+        reading = connector.execute(
+            "SELECT * FROM measurements WHERE value>(SELECT AVG(value) FROM measurement WHERE deivce=(SELECT id FROM devices WHERE room=?) ) = ? ORDER BY ts DESC LIMIT 1",
+            (room.id,)).fetchall()
+        output=connector.execute(reading, (room.id, date)).fetchall()
+        connector.close()
 
+        for hour, avg_humidity in output:
+            # Query to get the count of measurements above the average humidity for each hour
+            above_avg_count_query = """
+                SELECT COUNT(*) 
+                FROM measurements 
+                WHERE device IN (
+                    SELECT id 
+                    FROM devices 
+                    WHERE room = ?
+                ) 
+                AND date(ts) = ? 
+                AND strftime('%H', ts) = ? 
+                AND value > ?
+                """
+            # Execute the query with room ID, date, hour, and average humidity
+            above_avg_count = connector.execute(above_avg_count_query, (room.id, date, hour, avg_humidity)).fetchone()[
+                0]
+
+            # If the count is greater than 3, add the hour to the result list
+            if above_avg_count > 3:
+                humidityabove.append(hour)
+
+        return humidityabove
