@@ -23,7 +23,7 @@ class Device:
         self.supplier = supplier
         self.actuator = False
         self.sensor = False
-        self.is_active = False
+        self.is_active1 = False
         self.target_value = 0  # Setter definisjonene til enheten
 
         if sensor_type == "both":  # Setter scenario for definisjon til enhetstypen.
@@ -56,15 +56,15 @@ class Device:
 
     def turn_on(self, value=0):  # Setter aktivering for aktuator
         if self.actuator:
-            self.is_active = True
+            self.is_active1 = True
             self.target_value = value
 
     def turn_off(self):  # ""_"" deaktivering
         if self.actuator:
-            self.is_active = False
+            self.is_active1 = False
 
     def is_active(self):
-        return self.is_active
+        return self.is_active1
 
 
 class Sensor:
