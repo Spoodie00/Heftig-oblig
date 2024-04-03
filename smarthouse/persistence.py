@@ -50,6 +50,8 @@ class SmartHouseRepository:
             floor = room[1]
             floor_size = room[2]
             name = room[3]
+            if floor not in SmartHouse.floor_list:
+                test_house.register_floor(floor)
             test_house.register_room(floor, floor_size, name)
 
         connector = self.conn.cursor()

@@ -132,7 +132,7 @@ class SmartHouse:
     num_devices = []
     iddevice = []
     room_list = {}
-    floor_list = {}
+    floor_list = []
 
     def __init__(self):
         # Legg til countere her hvis nødvendig
@@ -155,9 +155,8 @@ class SmartHouse:
         self.id = None
 
     def register_floor(self, level):  # Definerer og lagrer etasje
-        self.num_floors.append(level)
-        new_floor = HouseFloor(level)
-        SmartHouse.floor_list[level] = new_floor
+        int_level = int(level)
+        SmartHouse.floor_list.append(int_level)
 
     def register_room(self, floor, room_size, room_name=None):  # "_" rom
         self.num_rooms.append(room_name)
@@ -174,7 +173,7 @@ class SmartHouse:
         registered a basement (level=0), a ground floor (level=1) and a first floor
         (leve=1), then the resulting list contains these three flors in the above order.
         """
-        return self.num_floors
+        return SmartHouse.floor_list
 
     def get_rooms(self):
         """
