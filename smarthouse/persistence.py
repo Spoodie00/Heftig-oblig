@@ -9,8 +9,8 @@ class SmartHouseRepository:
     """
 
     def __init__(self, file: str) -> None:
-        self.file = file 
-        self.conn = sqlite3.connect(file)
+        self.file = file
+        self.conn = sqlite3.connect(file, check_same_thread=False)
 
     def __del__(self):
         self.conn.close()
@@ -135,9 +135,6 @@ class SmartHouseRepository:
 
         pass
 
-    # statistics
-
-    
     def calc_avg_temperatures_in_room(self, room, from_date: Optional[str] = None, until_date: Optional[str] = None) -> dict:
         """Calculates the average temperatures in the given room for the given time range by
         fetching all available temperature sensor data (either from a dedicated temperature sensor 
@@ -237,3 +234,12 @@ class SmartHouseRepository:
                 output.append(int(key))
 
         return output
+
+    def get_floor_info(self, floor_id):
+        connector = self.conn.cursor()
+        reading = connector.execute("""
+            SELECT *
+            FROM rooms
+            WHERE floor = ?
+            """, floor_id).fetchall()
+        connector.close()
