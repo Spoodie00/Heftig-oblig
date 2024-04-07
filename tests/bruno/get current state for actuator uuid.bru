@@ -1,0 +1,11 @@
+meta {
+  name:  get current state for actuator uuid
+  type: http
+  seq: 10
+}
+
+get {
+  url: http://127.0.0.1:8000/smarthouse/actuator/{uuid}/current
+  body: none
+  auth: none
+}

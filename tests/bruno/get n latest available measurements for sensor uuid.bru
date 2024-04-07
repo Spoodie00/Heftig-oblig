@@ -1,0 +1,15 @@
+meta {
+  name: get n latest available measurements for sensor uuid
+  type: http
+  seq: 8
+}
+
+get {
+  url: /smarthouse/sensor/{uuid}/values?limit=n
+  body: none
+  auth: none
+}
+
+query {
+  limit: n
+}

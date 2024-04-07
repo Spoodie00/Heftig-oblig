@@ -1,0 +1,11 @@
+meta {
+  name:  get current sensor measurement for sensor uuid
+  type: http
+  seq: 6
+}
+
+get {
+  url: smarthouse/sensor/{uuid}/current
+  body: none
+  auth: none
+}
