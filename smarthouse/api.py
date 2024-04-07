@@ -37,7 +37,7 @@ def lookup(table, list_of_columns, fetch="all", condition_variable="", condition
     """
 
     if condition_variable and condition_value:
-        query += f"WHERE {condition_variable} = {condition_value}"
+        query += f"WHERE {condition_variable} = '{condition_value}'"
 
     if fetch == "all":
         output = connector.execute(query).fetchall()
@@ -154,3 +154,23 @@ def get_all_devices():
         linecount += 1
 
     return output
+
+
+@app.get("/smarthouse/device/{uuid}")
+def get_specific_device(uuid):
+    reading = lookup("devices", ["*"], fetch="one", condition_variable="id", condition_value=str(uuid))
+    room = lookup("rooms", ["name"], fetch="one", condition_variable="id", condition_value=reading[0][1])
+
+    return {
+        "supplier": reading[4],
+        "product": reading[5],
+        "kind": reading[2],
+        "category": reading[3],
+        "room": room
+    }
+
+
+if __name__ == '__main__':
+    uvicorn.run(app, host="127.0.0.1", port=8000)
+
+
