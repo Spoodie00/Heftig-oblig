@@ -1,0 +1,16 @@
+meta {
+  name: information for a given device identfied by uuid
+  type: http
+  seq: 15
+}
+
+get {
+  url: http://127.0.0.1:8000//smarthouse/device/{uuid}?uuid=str&actuator=bool
+  body: none
+  auth: none
+}
+
+query {
+  uuid: str
+  actuator: bool
+}

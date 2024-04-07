@@ -1,0 +1,11 @@
+meta {
+  name: delete oldest measurements for sensor uuid
+  type: http
+  seq: 9
+}
+
+delete {
+  url: http://127.0.0.1:8000/DELETE smarthouse/sensor/{uuid}/oldest
+  body: none
+  auth: none
+}
