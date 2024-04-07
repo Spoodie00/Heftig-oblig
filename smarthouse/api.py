@@ -1,11 +1,12 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse, HTMLResponse
+from fastapi.responses import RedirectResponse
 from smarthouse.persistence import SmartHouseRepository
 from pathlib import Path
 import os
-import sqlite3
+import datetime
+
 def setup_database():
     project_dir = Path(__file__).parent.parent
     db_file = project_dir / "data" / "db.sql" # you have to adjust this if you have changed the file name of the database
@@ -159,18 +160,96 @@ def get_all_devices():
 @app.get("/smarthouse/device/{uuid}")
 def get_specific_device(uuid):
     reading = lookup("devices", ["*"], fetch="one", condition_variable="id", condition_value=str(uuid))
-    room = lookup("rooms", ["name"], fetch="one", condition_variable="id", condition_value=reading[0][1])
+    room = lookup("rooms", ["name"], fetch="one", condition_variable="id", condition_value=reading[1])
 
     return {
         "supplier": reading[4],
         "product": reading[5],
         "kind": reading[2],
         "category": reading[3],
-        "room": room
+        "room": room[0]
     }
 
 
+""" spesielle endepunkter for tilgang til sensor funksjoen"""
+
+@app.get("/smarthouse/sensor/{uuid}/current")
+def get_sensor(uuid):
+    """get current sensor measurement for sensor uuid"""
+
+    device_object = smarthouse.get_device_by_id(uuid)
+    reading = repo.get_latest_reading(device_object)
+
+    return reading
+
+@app.post("/smarthouse/sensor/{uuid}/current")
+def create_measurement(uuid):
+    """Add measurement for sensor uuid"""
+    device_object = smarthouse.get_device_by_id(uuid)
+    timestamp = datetime.datetime.now()
+    connector = repo.conn.cursor()
+
+    query = f"""
+           INSERT INTO measurements(device, ts, value, unit)
+           VALUES({uuid}, {timestamp}, {device_object.value}, {device_object.unit})
+       """
+    connector.execute(query)
+    connector.close()
+
+    return "measurement added"
+
+
+@app.get("/smarthouse/sensor/{uuid}/values")
+def get_sensor_values(uuid, limit):
+    """Get n latest available measurements for sensor uuid"""
+    device_object = smarthouse.get_device_by_id(uuid)
+    measurements = repo.get_latest_reading(device_object, limit)
+    return measurements
+
+'''
+@app.delete("/smarthouse/sensor/{uuid}/oldest")
+def delete_oldest_measurement(uuid: str, response: Response):
+    """Delete oldest measurements for sensor uuid"""
+    success = SmartHouseRepository.delete_oldest_measurement(uuid)
+
+    if success:
+        return {"message": "Oldest measurements deleted successfully"}
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {"message": "No measurements found"}
+
+    return None
+
+
+
+@app.get("/smarthouse/actuator/{uuid}/current")
+def get_current_actuator(uuid:str, response: Response):
+    """get current state for actuator uuid"""
+    devices = lookup("devices", ["id", "supplier", "product"])
+
+    output = {}
+
+    linecount = 0
+    for line in devices:
+        output["device " + str(linecount)] = {
+            "device id": line[0],
+            "supplier": line[1],
+            "name": line[2]
+        }
+        linecount += 1
+
+    return output
+
+@app.put("/smarthouse/device/{uuid}")
+def update_device(uuid:str, actuator: bool, response: Response):
+    """update current state for actuator uuid"""
+    device_result=SmartHouseRepository.update_actuator_state(uuid, actuator)
+    if device_result:
+        return device_result
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+
+        return None
+'''
 if __name__ == '__main__':
     uvicorn.run(app, host="127.0.0.1", port=8000)
-
-

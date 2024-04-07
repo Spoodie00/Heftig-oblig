@@ -1,5 +1,5 @@
 import random
-
+import datetime
 
 class Measurement:
     """
@@ -71,12 +71,13 @@ class Sensor:
     def __init__(self, measurement_tuple=None):  # setter definisjonene til sensor klassen
         if not measurement_tuple:
             self.temp = random.uniform(10.5, 75.5)
-            self.unit = "°C"
-            self.timestamp = "1970-01-01 00:00:01"
+            self.reading = "°C"
+            timestamp = datetime.datetime.now()
+            self.timestamp = timestamp
         else:
-            self.timestamp = measurement_tuple[1]
-            self.temp = measurement_tuple[2]
-            self.unit = measurement_tuple[3]
+            self.timestamp = measurement_tuple[0][1]
+            self.reading = measurement_tuple[0][2]
+            self.unit = measurement_tuple[0][3]
 
     @property
     def unit(self):

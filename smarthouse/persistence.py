@@ -28,7 +28,6 @@ class SmartHouseRepository:
         self.conn.close()
         self.conn = sqlite3.connect(self.file)
 
-
     def load_smarthouse_deep(self):
         """
         This method retrives the complete single instance of the _SmartHouse_ 
@@ -84,21 +83,20 @@ class SmartHouseRepository:
 
         return test_house
 
-
-    def get_latest_reading(self, sensor) -> Optional[Measurement]:
+    def get_latest_reading(self, sensor, n=1):
         """
         Retrieves the most recent sensor reading for the given sensor if available.
         Returns None if the given object has no sensor readings.
         """
         # TODO: After loading the smarthouse, continue here
         connector = self.conn.cursor()
-        reading = connector.execute("SELECT * FROM measurements WHERE device = ? ORDER BY ts DESC LIMIT 1", (sensor.id,)).fetchone()
+        reading = connector.execute(f"SELECT * FROM measurements WHERE device = '{sensor.id}' ORDER BY ts DESC LIMIT '{n}'").fetchall()
         connector.close()
         output1 = sensor.last_measurement(reading)
-        if isinstance(output1, str) or reading == None:
+        if isinstance(output1, str) or reading is None:
             return None
         else:
-            return output1
+            return reading
 
     def update_actuator_state(self, actuator):
         cursor = self.cursor()
