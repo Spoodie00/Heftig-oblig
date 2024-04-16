@@ -206,50 +206,47 @@ def get_sensor_values(uuid, limit):
     measurements = repo.get_latest_reading(device_object, limit)
     return measurements
 
-'''
+
 @app.delete("/smarthouse/sensor/{uuid}/oldest")
-def delete_oldest_measurement(uuid: str, response: Response):
+def delete_oldest_measurement(uuid):
     """Delete oldest measurements for sensor uuid"""
-    success = SmartHouseRepository.delete_oldest_measurement(uuid)
 
-    if success:
-        return {"message": "Oldest measurements deleted successfully"}
-    else:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return {"message": "No measurements found"}
+    connector = repo.conn.cursor()
 
-    return None
+    query = f"""
+        DELETE FROM measurements
+        WHERE device = {uuid}
+        ORDER BY ts ASC
+        LIMIT 1
+    """
 
+    connector.execute(query)
+    connector.close()
+
+    return "Success"
 
 
 @app.get("/smarthouse/actuator/{uuid}/current")
-def get_current_actuator(uuid:str, response: Response):
+def get_current_actuator(uuid):
     """get current state for actuator uuid"""
-    devices = lookup("devices", ["id", "supplier", "product"])
+    device = smarthouse.get_device_by_id(uuid)
+    reading = 0
+    if device.actuator:
+        reading = lookup(f"update_actuator_state", ["is_active"], "one", "deviceid", uuid)
+        if reading is None:
+            repo.update_actuator_state(device)
+            reading = lookup(f"update_actuator_state", ["is_active"], "one", "deviceid", uuid)
+            return reading
+    return reading[0]
 
-    output = {}
-
-    linecount = 0
-    for line in devices:
-        output["device " + str(linecount)] = {
-            "device id": line[0],
-            "supplier": line[1],
-            "name": line[2]
-        }
-        linecount += 1
-
-    return output
 
 @app.put("/smarthouse/device/{uuid}")
-def update_device(uuid:str, actuator: bool, response: Response):
+def update_device(uuid):
     """update current state for actuator uuid"""
-    device_result=SmartHouseRepository.update_actuator_state(uuid, actuator)
-    if device_result:
-        return device_result
-    else:
-        response.status_code = status.HTTP_404_NOT_FOUND
+    device = smarthouse.get_device_by_id(uuid)
+    repo.update_actuator_state(device)
+    print("Success!")
 
-        return None
-'''
+
 if __name__ == '__main__':
     uvicorn.run(app, host="127.0.0.1", port=8000)

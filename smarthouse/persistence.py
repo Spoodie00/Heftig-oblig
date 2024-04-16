@@ -90,7 +90,11 @@ class SmartHouseRepository:
         """
         # TODO: After loading the smarthouse, continue here
         connector = self.conn.cursor()
-        reading = connector.execute(f"SELECT * FROM measurements WHERE device = '{sensor.id}' ORDER BY ts DESC LIMIT '{n}'").fetchall()
+        if n == 1:
+            reading = connector.execute(f"SELECT * FROM measurements WHERE device = '{sensor.id}'").fetchone()
+        else:
+            reading = connector.execute(
+                f"SELECT * FROM measurements WHERE device = '{sensor.id}' ORDER BY ts DESC LIMIT '{n}'").fetchall()
         connector.close()
         output1 = sensor.last_measurement(reading)
         if isinstance(output1, str) or reading is None:
