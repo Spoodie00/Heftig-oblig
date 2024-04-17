@@ -13,11 +13,11 @@ def lightbulb_cmd(state, did):
 
     logging.info(f"Dashboard: {new_state}")
 
-    # TODO: START
     # send HTTP request with new actuator state to cloud service
+    url = "http://127.0.0.1:8000/smarthouse/device/6b1c5f6b-37f6-4e3d-9145-1cfbe2f1fc28"
 
-
-    # TODO: END
+    response = requests.put(url, json={"is_active": new_state})
+    print(response.json())
 
 
 def init_lightbulb(container, did):

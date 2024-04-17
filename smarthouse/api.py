@@ -241,11 +241,12 @@ def get_current_actuator(uuid):
 
 
 @app.put("/smarthouse/device/{uuid}")
-def update_device(uuid):
+def update_device(uuid: str, state: dict = None):
     """update current state for actuator uuid"""
     device = smarthouse.get_device_by_id(uuid)
-    repo.update_actuator_state(device)
-    print("Success!")
+    if (state["is_active"] == "Off" and device.is_active()) or (state["is_active"] == "On" and not device.is_active()):
+        repo.update_actuator_state(device)
+    return {"is_active": device.is_active()}
 
 
 if __name__ == '__main__':

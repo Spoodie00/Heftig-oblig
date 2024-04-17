@@ -117,9 +117,8 @@ class SmartHouseRepository:
         existing_actuator = cursor.fetchall()
 
         if existing_actuator:
-            state=1 if actuator.is_active() or actuator.turn_on() else 0
+            state = 0 if actuator.is_active() or actuator.turn_on() else 1
             # Update the existing actuator state
-            print(actuator.get_id())
             print(state)
             cursor.execute("UPDATE update_actuator_state SET is_active = ?, turnon=? WHERE deviceid = ?",
                            (state, actuator.turn_on(), actuator.get_id()))
@@ -147,8 +146,6 @@ class SmartHouseRepository:
         The result should be a dictionary where the keys are strings representing dates (iso format) and 
         the values are floating point numbers containing the average temperature that day.
         """
-        # TODO: This and the following statistic method are a bit more challenging. Try to design the respective 
-        #       SQL statements first in a SQL editor like Dbeaver and then copy it over here.  
         device_list = []
         params = []
         result = []
