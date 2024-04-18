@@ -15,8 +15,14 @@ def refresh_btn_cmd(temp_widget, did):
     # TODO: START
     # send request to cloud service to obtain current temperature
 
+    # send HTTP request with new actuator state to cloud service
+    url = "http://127.0.0.1:8000/smarthouse/sensor/4d8b1d62-7921-4917-9b70-bbd31f6e2e8e/current"
+    response = requests.post(url)
+    print(response.json())
+
     # replace statement below with measurement from response
     sensor_measurement = SensorMeasurement(init_value="-273.15")
+    sensor_measurement.set_temperature(response.json())
 
     # TODO: END
 

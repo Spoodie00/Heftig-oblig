@@ -90,9 +90,11 @@ class SmartHouseRepository:
         """
         # TODO: After loading the smarthouse, continue here
         connector = self.conn.cursor()
-        if n == 1:
-            reading = connector.execute(f"SELECT * FROM measurements WHERE device = '{sensor.id}'").fetchone()
+        if int(n) == 1:
+            print(n)
+            reading = connector.execute(f"SELECT * FROM measurements WHERE device = '{sensor.id}' ORDER BY ts DESC").fetchone()
         else:
+            print("tedt")
             reading = connector.execute(
                 f"SELECT * FROM measurements WHERE device = '{sensor.id}' ORDER BY ts DESC LIMIT '{n}'").fetchall()
         connector.close()

@@ -186,17 +186,19 @@ def get_sensor(uuid):
 def create_measurement(uuid):
     """Add measurement for sensor uuid"""
     device_object = smarthouse.get_device_by_id(uuid)
+    sensor_object = device_object.last_measurement()
+
     timestamp = datetime.datetime.now()
     connector = repo.conn.cursor()
 
     query = f"""
            INSERT INTO measurements(device, ts, value, unit)
-           VALUES({uuid}, {timestamp}, {device_object.value}, {device_object.unit})
+           VALUES('{uuid}', '{timestamp}', '{sensor_object.temp}', '{sensor_object.unit}')
        """
     connector.execute(query)
     connector.close()
 
-    return "measurement added"
+    return sensor_object.temp
 
 
 @app.get("/smarthouse/sensor/{uuid}/values")
@@ -204,6 +206,7 @@ def get_sensor_values(uuid, limit):
     """Get n latest available measurements for sensor uuid"""
     device_object = smarthouse.get_device_by_id(uuid)
     measurements = repo.get_latest_reading(device_object, limit)
+    print(measurements)
     return measurements
 
 
