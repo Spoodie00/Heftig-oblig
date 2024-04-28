@@ -33,6 +33,19 @@ class Sensor:
 
         # TODO: START
         # send temperature to the cloud service with regular intervals
+        while True: 
+            try:
+                response=requests.get(common.BASE_URL)
+                if response.status_code==200:
+                    #oppdaterer tilstand på sensor
+                    self.measurement = SensorMeasurement.from_json(response.json())
+                    logging.info(f"Sensor Client {self.did}: Fetched measurement: {self.measurement.get_temperature()}")
+
+                else:
+                    logging.error(f"Sensor client{self.did}:Failed to fetch state")
+            except requests.RequestException as e:
+                logging.error(f"Sensor client {self.did}: Failed to connect to cloud: {str(e)}")
+            time.sleep(common.TEMPERATURE_SENSOR_CLIENT_SLEEP_TIME)
 
         logging.info(f"Client {self.did} finishing")
 
@@ -40,12 +53,18 @@ class Sensor:
 
     def run(self):
 
-        pass
+        logging.info(f"Sensor{self.did} starting")
         # TODO: START
 
         # create and start thread simulating physical temperature sensor
+        simulator_thread=threading.Thread(target=self.simulator)
+        simulator_thread.start()
 
         # create and start thread sending temperature to the cloud service
+        client_thread=threading.Thread(target=self.client)
+        client_thread.start()
 
         # TODO: END
 
+sensor = Sensor(common.TEMPERATURE_SENSOR_DID)
+sensor.run()
